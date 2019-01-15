@@ -77,11 +77,11 @@ sub vcl_recv {
 
 	if (req.url ~ "^/v3/polyfill(\.min)?\.js") {
 		call normalise_querystring_parameters_for_polyfill_bundle;
+	} else {
+		# Sort the querystring parameters alphabetically to improve chances of hitting a cached copy.
+		# If querystring is empty, remove the ? from the url.
+		set req.url = querystring.clean(querystring.sort(req.url));
 	}
-
-	# Sort the querystring parameters alphabetically to improve chances of hitting a cached copy.
-	# If querystring is empty, remove the ? from the url.
-	set req.url = querystring.clean(querystring.sort(req.url));
 	call set_backend;
 }
 
