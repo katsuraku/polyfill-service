@@ -5,33 +5,25 @@ sub sort_comma_separated_value {
 	# comma-separated-value is a query-string parameter and then uses 
 	# Fastly's querystring.sort function to sort the values. Once sorted
 	# it then turn the query-parameters back into a CSV.
-	# Set the CSV on the header `Sort-Value`.
+	# Set the CSV on the header `Sorted-Value`.
 	# Returns the sorted CSV on the header `Sorted-Value`.
-	declare local var.value STRING;
-	set var.value = req.http.Sort-value;
-
-	# If query value does not exist or is empty, set it to ""
-	set var.value = if(var.value != "", var.value, "");
 
 	# Replace all `&` characters with `^`, this is because `&` would break the value up into pieces.
-	set var.value = regsuball(var.value, "&", "^");
+	set req.http.Sorted-value = regsuball(req.http.Sorted-value, "&", "^");
 
 	# Replace all `,` characters with `&` to break them into individual query values
 	# Append `1-` infront of all the query values to make them simpler to transform later
-	set var.value = "1-" regsuball(var.value, ",", "&1-");
+	set req.http.Sorted-value = regsuball(req.http.Sorted-value, ",", "&1-");
 	
 	# Create a querystring-like string in order for querystring.sort to work.
-	set var.value = querystring.sort("?" var.value);
+	set req.http.Sorted-value = querystring.sort("?1-" req.http.Sorted-value);
 
 	# Grab all the query values from the sorted url
-	set var.value = regsub(var.value, "\?", "");
+	set req.http.Sorted-value = regsub(req.http.Sorted-value, "^\?1-", "");
 	
 	# Reverse all the previous transformations to get back the single `features` query value value
-	set var.value = regsuball(var.value, "1-", "");
-	set var.value = regsuball(var.value, "&", ",");
-	set var.value = regsuball(var.value, "\^", "&");
-
-	set req.http.Sorted-Value = var.value;
+	set req.http.Sorted-value = regsuball(req.http.Sorted-value, "&1-", ",");
+	set req.http.Sorted-value = regsuball(req.http.Sorted-value, "\^", "&");
 }
 
 sub normalise_querystring_parameters_for_polyfill_bundle {
@@ -53,7 +45,7 @@ sub normalise_querystring_parameters_for_polyfill_bundle {
 		if (std.strlen(re.group.1) < 100) {
 			# We add the value of the features parameter to this header
 			# This is to be able to have sort_comma_separated_value sort the value
-			set req.http.Sort-Value = urldecode(re.group.1);
+			set req.http.Sorted-value = urldecode(re.group.1);
 			call sort_comma_separated_value;
 			# The header Sorted-Value now contains the sorted version of the features parameter.
 			set var.querystring = querystring.set(var.querystring, "features", req.http.Sorted-Value);
@@ -73,7 +65,7 @@ sub normalise_querystring_parameters_for_polyfill_bundle {
 		if (std.strlen(re.group.1) < 100) {
 			# We add the value of the excludes parameter to this header
 			# This is to be able to have sort_comma_separated_value sort the value
-			set req.http.Sort-Value = urldecode(re.group.1);
+			set req.http.Sorted-value = urldecode(re.group.1);
 			call sort_comma_separated_value;
 			# The header Sorted-Value now contains the sorted version of the excludes parameter.
 			set var.querystring = querystring.set(var.querystring, "excludes", req.http.Sorted-Value);
