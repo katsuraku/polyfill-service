@@ -107,26 +107,6 @@ sub normalise_querystring_parameters_for_polyfill_bundle {
 	}
 
 	# (?i) makes the regex case-insensitive
-	# The regex will match only if their are characters after `features=` which are not an ampersand (&).
-	if (req.url.qs ~ "(?i)(?:^|&)features=([^&#]*)") {
-		# Parameter has already been set, use the already set value.
-		# re.group.1 is the first regex capture group in the regex above.
-		if (std.strlen(re.group.1) < 100) {
-			# We add the value of the features parameter to this header
-			# This is to be able to have sort_comma_separated_value sort the value
-			set req.http.Sorted-value = urldecode(re.group.1);
-			call sort_comma_separated_value;
-			# The header Sorted-Value now contains the sorted version of the features parameter.
-			set var.querystring = querystring.set(var.querystring, "features", req.http.Sorted-Value);
-		} else {
-			set var.querystring = querystring.set(var.querystring, "features", urldecode(re.group.1));
-		}
-	} else {
-		# Parameter has not been set, use the default value.
-		set var.querystring = querystring.set(var.querystring, "features", "default");
-	}
-	
-	# (?i) makes the regex case-insensitive
 	# The regex will match only if their are characters after `excludes=` which are not an ampersand (&).
 	if (req.url.qs ~ "(?i)(?:^|&)excludes=([^&#]*)") {
 		# Parameter has already been set, use the already set value.
@@ -144,6 +124,26 @@ sub normalise_querystring_parameters_for_polyfill_bundle {
 	} else {
 		# If excludes is not set, set to default value ""
 		set var.querystring = var.querystring "&excludes=";
+	}
+
+	# (?i) makes the regex case-insensitive
+	# The regex will match only if their are characters after `features=` which are not an ampersand (&).
+	if (req.url.qs ~ "(?i)(?:^|&)features=([^&#]*)") {
+		# Parameter has already been set, use the already set value.
+		# re.group.1 is the first regex capture group in the regex above.
+		if (std.strlen(re.group.1) < 100) {
+			# We add the value of the features parameter to this header
+			# This is to be able to have sort_comma_separated_value sort the value
+			set req.http.Sorted-value = urldecode(re.group.1);
+			call sort_comma_separated_value;
+			# The header Sorted-Value now contains the sorted version of the features parameter.
+			set var.querystring = querystring.set(var.querystring, "features", req.http.Sorted-Value);
+		} else {
+			set var.querystring = querystring.set(var.querystring, "features", urldecode(re.group.1));
+		}
+	} else {
+		# Parameter has not been set, use the default value.
+		set var.querystring = querystring.set(var.querystring, "features", "default");
 	}
 
 	set req.url = var.url var.querystring;
