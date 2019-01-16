@@ -125,7 +125,8 @@ sub unset_common_request_headers {
 	unset bereq.http.Authorization;
 	unset bereq.http.Cache-Control;
 	unset bereq.http.Connection;
-	unset bereq.http.Content-Length;
+	# Variable `bereq.http.Content-Length` cannot be unset
+	# unset bereq.http.Content-Length;
 	unset bereq.http.Content-MD5;
 	unset bereq.http.Content-Type;
 	unset bereq.http.Cookie;
