@@ -177,7 +177,9 @@ sub unset_common_request_headers {
 	# unset bereq.http.X-Request-ID;
 	unset bereq.http.X-Correlation-ID;
 	unset bereq.http.Save-Data;
+}
 
+sub unset_fastly_request_headers {
 	# Fastly specific headers
 	unset bereq.http.Fastly-Orig-Accept-Encoding;
 	unset bereq.http.Fastly-Tmp-Obj-TTL;
@@ -187,7 +189,9 @@ sub unset_common_request_headers {
   	unset bereq.http.Surrogate-Control;
 	# Variable `bereq.http.Fastly-FF` cannot be unset
 	# unset bereq.http.Fastly-FF;
+}
 
+sub unset_polyfill_service_request_headers {
 	# polyfill-service specific headers
 	unset bereq.http.Sorted-Value;
 	unset bereq.http.useragent_parser_family;
@@ -215,6 +219,8 @@ sub vcl_fetch {
 	}
 
 	call unset_common_request_headers;
+	call unset_fastly_request_headers;
+	call unset_polyfill_service_request_headers;
 
 	# These header are only required for HTML documents.
 	if (beresp.http.Content-Type ~ "text/html") {
