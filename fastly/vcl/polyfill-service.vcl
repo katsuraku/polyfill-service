@@ -185,7 +185,8 @@ sub unset_common_request_headers {
 	unset bereq.http.Fastly-Cachetype;
 	unset bereq.http.Surrogate-Key;
   	unset bereq.http.Surrogate-Control;
-	unset bereq.http.Fastly-FF;
+	# Variable `bereq.http.Fastly-FF` cannot be unset
+	# unset bereq.http.Fastly-FF;
 
 	# polyfill-service specific headers
 	unset bereq.http.Sorted-Value;
