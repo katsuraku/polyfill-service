@@ -148,7 +148,8 @@ sub unset_common_request_headers {
 	# Needed if the backend is meant to handle CORS (Cross Origin Resource Sharing)
 	# unset bereq.http.Origin;
 	unset bereq.http.Pragma;
-	unset bereq.http.Proxy-Authorization;
+	# Variable `bereq.http.Proxy-Authorization` cannot be unset
+	# unset bereq.http.Proxy-Authorization;
 	unset bereq.http.Range;
 	unset bereq.http.Referer;
 	unset bereq.http.TE;
