@@ -155,7 +155,8 @@ sub unset_common_request_headers {
 	# Variable `bereq.http.TE` cannot be unset
 	# unset bereq.http.TE;
 	unset bereq.http.User-Agent;
-	unset bereq.http.Upgrade;
+	# Variable `bereq.http.Upgrade` cannot be unset
+	# unset bereq.http.Upgrade;
 	unset bereq.http.Via;
 	unset bereq.http.Warning;
 	
