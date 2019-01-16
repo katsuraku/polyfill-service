@@ -3,6 +3,7 @@
 const moment = require("moment");
 const axios = require("axios");
 const _ = require("lodash");
+const numeral = require("numeral");
 
 const fastly = async (apiKey, service) => {
 	if (!service) {
@@ -47,6 +48,7 @@ const fastly = async (apiKey, service) => {
 			rollup.cache = _.round(100 - rollup.misses / rollup.requests, 7);
 			rollup.startDate = moment(data.data.data[0].start_time, "X").format("MMMM Do");
 			rollup.endDate = moment(data.data.data[data.data.data.length - 1].start_time, "X").format("MMMM Do");
+			rollup.requestsCommaFormatted = numeral(rollup.requests).format("0,0");
 			return {
 				byday: byday,
 				rollup: rollup
