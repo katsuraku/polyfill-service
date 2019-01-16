@@ -109,10 +109,106 @@ sub vcl_pass {
 	}
 }
 
+sub unset_common_request_headers {
+	# Common request headers from https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Standard_request_fields
+	unset bereq.http.A-IM;
+
+	# These may be needed by the backend to decide what type of response to return
+	# unset bereq.http.Accept;
+	# unset bereq.http.Accept-Charset;
+	# unset bereq.http.Accept-Encoding;
+	# unset bereq.http.Accept-Language;
+	unset bereq.http.Accept-Datetime;
+	# Needed if the backend is meant to handle CORS (Cross Origin Resource Sharing)
+	# unset bereq.http.Access-Control-Request-Method;
+	# unset bereq.http.Access-Control-Request-Headers;
+	unset bereq.http.Authorization;
+	unset bereq.http.Cache-Control;
+	unset bereq.http.Connection;
+	unset bereq.http.Content-Length;
+	unset bereq.http.Content-MD5;
+	unset bereq.http.Content-Type;
+	unset bereq.http.Cookie;
+	unset bereq.http.Date;
+	unset bereq.http.Expect;
+	unset bereq.http.Forwarded;
+	unset bereq.http.From;
+	# Needed for Heroku
+	# unset bereq.http.Host;
+	unset bereq.http.HTTP2-Settings;
+	# These are needed to enable the backend to return 304 not modified
+	# unset bereq.http.If-Match;
+	# unset bereq.http.If-Modified-Since;
+	# unset bereq.http.If-None-Match;
+	# unset bereq.http.If-Range;
+	# unset bereq.http.If-Unmodified-Since;
+	unset bereq.http.Max-Forwards;
+	# Needed if the backend is meant to handle CORS (Cross Origin Resource Sharing)
+	# unset bereq.http.Origin;
+	unset bereq.http.Pragma;
+	unset bereq.http.Proxy-Authorization;
+	unset bereq.http.Range;
+	unset bereq.http.Referer;
+	unset bereq.http.TE;
+	unset bereq.http.User-Agent;
+	unset bereq.http.Upgrade;
+	unset bereq.http.Via;
+	unset bereq.http.Warning;
+	
+	# common request headers from https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Common_non-standard_request_fields
+	unset bereq.http.Upgrade-Insecure-Requests;
+	unset bereq.http.X-Requested-With;
+	unset bereq.http.DNT;
+	unset bereq.http.X-Forwarded-For;
+	unset bereq.http.X-Forwarded-Host;
+	unset bereq.http.X-Forwarded-Proto;
+	unset bereq.http.Front-End-Https;
+	unset bereq.http.X-Http-Method-Override;
+	unset bereq.http.X-ATT-DeviceId;
+	unset bereq.http.X-Wap-Profile;
+	unset bereq.http.Proxy-Connection;
+	unset bereq.http.X-UIDH;
+	unset bereq.http.X-Csrf-Token;
+	unset bereq.http.X-Request-ID;
+	unset bereq.http.X-Correlation-ID;
+	unset bereq.http.Save-Data;
+
+	# Fastly specific headers
+	unset bereq.http.Fastly-Orig-Accept-Encoding;
+	unset bereq.http.Fastly-Tmp-Obj-TTL;
+  	unset bereq.http.Fastly-Tmp-Obj-Grace;
+	unset bereq.http.Fastly-Cachetype;
+	unset bereq.http.Surrogate-Key;
+  	unset bereq.http.Surrogate-Control;
+
+	# polyfill-service specific headers
+	unset bereq.http.Sorted-Value;
+	unset bereq.http.useragent_parser_family;
+	unset bereq.http.useragent_parser_major;
+	unset bereq.http.useragent_parser_minor;
+	unset bereq.http.useragent_parser_patch;
+	unset bereq.http.normalized_user_agent_family;
+	unset bereq.http.normalized_user_agent_major_version;
+	unset bereq.http.normalized_user_agent_minor_version;
+	unset bereq.http.normalized_user_agent_patch_version;
+	unset bereq.http.Normalized-User-Agent;
+	unset bereq.http.Orig-URL;
+	unset bereq.http.Fastly-Purge-Requires-Auth;
+	unset bereq.http.X-VCL-Route;
+	unset bereq.http.X-PreFetch-Miss;
+	unset bereq.http.X-PreFetch-Pass;
+	unset bereq.http.Debug-Backend;
+	unset bereq.http.X-Timer;
+	unset bereq.http.Host;
+	unset bereq.http.Fastly-Force-Shield;
+}
+
 sub vcl_fetch {
 	if (req.http.Fastly-Debug) {
 		call breadcrumb_fetch;
 	}
+
+	call unset_common_request_headers;
 
 	# These header are only required for HTML documents.
 	if (beresp.http.Content-Type ~ "text/html") {
