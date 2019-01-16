@@ -153,7 +153,7 @@ sub unset_common_request_headers {
 	unset bereq.http.Range;
 	unset bereq.http.Referer;
 	# Variable `bereq.http.TE` cannot be unset
-	unset bereq.http.TE;
+	# unset bereq.http.TE;
 	unset bereq.http.User-Agent;
 	unset bereq.http.Upgrade;
 	unset bereq.http.Via;
