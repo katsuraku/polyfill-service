@@ -131,7 +131,8 @@ sub unset_common_request_headers {
 	unset bereq.http.Content-Type;
 	unset bereq.http.Cookie;
 	unset bereq.http.Date;
-	unset bereq.http.Expect;
+	# Variable `bereq.http.Expect` cannot be unset
+	# unset bereq.http.Expect;
 	unset bereq.http.Forwarded;
 	unset bereq.http.From;
 	# Needed for Heroku
