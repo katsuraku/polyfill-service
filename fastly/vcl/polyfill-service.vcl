@@ -116,7 +116,7 @@ sub unset_common_request_headers {
 	# These may be needed by the backend to decide what type of response to return
 	# unset bereq.http.Accept;
 	# unset bereq.http.Accept-Charset;
-	# unset bereq.http.Accept-Encoding;
+	unset bereq.http.Accept-Encoding;
 	# unset bereq.http.Accept-Language;
 	unset bereq.http.Accept-Datetime;
 	# Needed if the backend is meant to handle CORS (Cross Origin Resource Sharing)
@@ -169,7 +169,7 @@ sub unset_common_request_headers {
 	unset bereq.http.Proxy-Connection;
 	unset bereq.http.X-UIDH;
 	unset bereq.http.X-Csrf-Token;
-	unset bereq.http.X-Request-ID;
+	# unset bereq.http.X-Request-ID;
 	unset bereq.http.X-Correlation-ID;
 	unset bereq.http.Save-Data;
 
@@ -180,6 +180,7 @@ sub unset_common_request_headers {
 	unset bereq.http.Fastly-Cachetype;
 	unset bereq.http.Surrogate-Key;
   	unset bereq.http.Surrogate-Control;
+	unset bereq.http.Fastly-FF;
 
 	# polyfill-service specific headers
 	unset bereq.http.Sorted-Value;
@@ -199,7 +200,6 @@ sub unset_common_request_headers {
 	unset bereq.http.X-PreFetch-Pass;
 	unset bereq.http.Debug-Backend;
 	unset bereq.http.X-Timer;
-	unset bereq.http.Host;
 	unset bereq.http.Fastly-Force-Shield;
 }
 
